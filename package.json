@@ -8,7 +8,7 @@
 		"serve": "vite",
 		"build": "vue-tsc && vite build",
 		"deploy": "vue-tsc && vite build && gh-pages -d dist",
-		"homepage": "https:/khgs2411.github.io/PokemonS-VNuzlockeGenerator/",
+		"homepage": "https://khgs2411.github.io/PokemonS-VNuzlockeGenerator/",
 		"preview": "vite preview"
 	},
 	"dependencies": {

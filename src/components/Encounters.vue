@@ -9,7 +9,8 @@
 			<transition name="fade-slide">
 				<div class="encounter" v-if="selectedEncounter">
 					<div class="image-container">
-						<img :alt="selectedEncounter.name" :src="pokedex[selectedEncounter.name].sprites.front_default ?? ''" />
+						<img v-if="pokedex[selectedEncounter.id]" :alt="selectedEncounter.name" :src="pokedex[selectedEncounter.id]?.sprites.front_default ?? ''" />
+						<Icon v-else width="50px" icon="mdi:pokeball"></Icon>
 					</div>
 					<div class="encounter-name">
 						{{ Lib.toTitleCase(selectedEncounter.name) }}
@@ -34,7 +35,7 @@
 				</div>
 			</transition>
 		</div>
-		<div v-if="showCheaterMessage">
+		<div class="cheater-message" v-if="showCheaterMessage">
 			<p>You little cheater ;)</p>
 			<p>I won't tell anyone, don't worry</p>
 			<p>You can pick whomever you like</p>
@@ -58,7 +59,7 @@
 
 <script lang="ts">
 import { computed, defineComponent } from "vue";
-import { usePokedexStore } from "../common/store/pokedex.store";
+import { usePokemonStore } from "../common/store/pokemon.store";
 import Lib from "../services/lib.services";
 import { Icon } from "@iconify/vue";
 import PokemonList from "./PokemonList.vue";
@@ -66,6 +67,7 @@ import Button from "primevue/button";
 import { PokemonAPIResource } from "../common/types/pokedex.type";
 import { storeToRefs } from "pinia";
 import Divider from "primevue/divider";
+import { usePokedexStore } from "../common/store/pokedex.store";
 
 export default defineComponent({
 	name: "Encounters",
@@ -76,15 +78,16 @@ export default defineComponent({
 		Divider,
 	},
 	setup() {
-		const store = usePokedexStore();
+		const store = usePokemonStore();
+		const pokedexStore = usePokedexStore();
 		const { generatedEncounterCount: generatedCount, selectedEncounter, showCheaterMessage, showTeamSidebar } = storeToRefs(store);
 		const team = computed(() => store.team);
 		const region = computed(() => store.region);
 		const encounterPerArea = computed(() => store.encounterPerArea);
-		const pokedex = computed(() => store.pokedex);
+		const pokedex = computed(() => pokedexStore.pokedex);
 		const locationInformation = computed(() => store.locationInformation);
 		const location = computed(() => store.location);
-		const encounters = computed(() => store.enocunters.locations);
+		const encounters = computed(() => store.enocunters.locations.paldea);
 
 		const selectedLocationEncounters = computed((): PokemonAPIResource[] => {
 			const found = Object.keys(encounters.value).find((loc) => loc == location.value || parseLocationName(loc) == location.value);
@@ -108,30 +111,31 @@ export default defineComponent({
 		}
 
 		function isSelectedLocation(loc: string): boolean {
-			if (loc == location.value || parseLocationName(loc as string) == location.value) {
-				return true;
-			}
-			return false;
+			return loc == location.value || parseLocationName(loc as string) == location.value;
 		}
 
 		function generateEncounter() {
 			generatedCount.value++;
-			selectedEncounter.value = Lib.getRandomItem(selectedLocationEncounters.value) as PokemonAPIResource;
+			selectedEncounter.value = Lib.getRandomItem(selectedLocationEncounters.value);
 			if (generatedCount.value > encounterPerArea.value) showCheaterMessage.value = true;
 		}
 
 		function caught() {
 			if (!selectedEncounter.value) return;
-			if (generatedCount.value > 1) {
+			if (generatedCount.value > 1 && team.value.length > 0) {
 				team.value[team.value.length - 1] = selectedEncounter.value;
 			} else {
 				team.value.push(selectedEncounter.value);
 			}
 			selectedEncounter.value = undefined;
 			showTeamSidebar.value = true;
+			showCheaterMessage.value = false;
 		}
 
-		function failed() {}
+		function failed() {
+			selectedEncounter.value = undefined;
+			showCheaterMessage.value = false;
+		}
 
 		return {
 			encounters: encounters,
@@ -180,6 +184,7 @@ export default defineComponent({
 			.encounter-name {
 			}
 		}
+
 		.image-container {
 			max-width: 100%; /* Ensure the container does not exceed its parent's width */
 			margin: 0 auto; /* Center the container horizontally (optional) */
@@ -202,6 +207,12 @@ export default defineComponent({
 				margin: 0 0.3rem;
 			}
 		}
+	}
+
+	.cheater-message {
+		text-align: center;
+		width: 100%;
+		height: fit-content;
 	}
 }
 
@@ -257,3 +268,4 @@ export default defineComponent({
 	transform: translateX(-100%);
 }
 </style>
+../common/store/pokemon.store

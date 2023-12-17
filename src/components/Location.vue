@@ -6,7 +6,6 @@
 			<Dropdown
 				@update:model-value="
 					() => {
-						console.log('change');
 						generatedEncounterCount = 0;
 						showCheaterMessage = false;
 						selectedEncounter = undefined;
@@ -25,7 +24,7 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import Dropdown from "primevue/dropdown";
-import { usePokedexStore } from "../common/store/pokedex.store";
+import { usePokemonStore } from "../common/store/pokemon.store";
 import Lib from "../services/lib.services";
 import { NamedAPIResource } from "../common/types/pokedex.type";
 import { storeToRefs } from "pinia";
@@ -38,7 +37,7 @@ export default defineComponent({
 		Dropdown,
 	},
 	setup() {
-		const store = usePokedexStore();
+		const store = usePokemonStore();
 		const { locationInformation: area, location, generatedEncounterCount, showCheaterMessage, selectedEncounter } = storeToRefs(store);
 		const locations = computed((): { label: string; value: string }[] => {
 			return Lib.isNumpty(store.region?.locations)
@@ -79,3 +78,4 @@ export default defineComponent({
 	}
 }
 </style>
+../common/store/pokemon.store

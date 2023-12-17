@@ -1,8 +1,8 @@
 <template>
 	<div class="pokedex">
-		<div class="view">
+		<!-- <div class="view">
 			<SelectButton option-label="label" option-value="value" :options="viewOptions" v-model="view"></SelectButton>
-		</div>
+		</div> -->
 		<div class="logos">
 			<img :class="[{ selected: version == 'scarlet' }]" src="../assets/Pokemon_Scarlet_Logo.png" @click="version = 'scarlet'" alt="scarlet" />
 			<img :class="[{ selected: version == 'violet' }]" src="../assets/Pokemon_Violet_Logo.png" @click="version = 'violet'" alt="violet" />
@@ -19,15 +19,14 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, onMounted, watch, Ref } from "vue";
-import { usePokedexStore } from "../common/store/pokedex.store";
+import { ref, defineComponent, onMounted, Ref } from "vue";
+import { usePokemonStore } from "../common/store/pokemon.store";
 import Lib from "../services/lib.services";
 import Location from "../components/Location.vue";
 import Map from "../components/Map.vue";
 import { storeToRefs } from "pinia";
 import Encounters from "../components/Encounters.vue";
 import SelectButton from "primevue/selectbutton";
-import CacheService from "../services/cache.service";
 import Team from "../components/Team.vue";
 
 export default defineComponent({
@@ -40,36 +39,19 @@ export default defineComponent({
 		SelectButton,
 	},
 	setup() {
-		const store = usePokedexStore();
+		const store = usePokemonStore();
 		const { version } = storeToRefs(store);
+
 		const view: Ref<"map" | "encounters"> = ref("encounters"); // "map" | "encounters
 		const viewOptions = ref([
 			{ label: "Show Encounters", value: "encounters" },
 			{ label: "Show Map", value: "map" },
 		]);
 
-		async function init() {
-			await store.init();
-		}
-
-		watch(
-			store.$state,
-			(state) => {
-				const cache = {
-					version: state.version,
-					region: state.region,
-					location: state.location,
-					pokemon: state.pokemon,
-					locationInformation: state.locationInformation,
-				};
-				CacheService.debouncedLocalStorageSave("pokedex", cache);
-			},
-			{ deep: true },
-		);
-
 		onMounted(async () => {
-			await init();
+			await store.init();
 		});
+
 		return {
 			version,
 			view,
@@ -82,13 +64,16 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .pokedex {
+	height: calc(100% - 32px);
+	width: 80%;
+	margin: 0 auto;
 	display: flex;
 	flex-direction: column;
 	gap: 0.5rem;
 	position: relative;
 	.view {
 		position: absolute;
-		top: 1rem;
+		top: calc(32px + 0.5rem);
 		right: 0;
 		width: fit-content;
 		height: fit-content;
@@ -108,3 +93,4 @@ export default defineComponent({
 	}
 }
 </style>
+../common/store/pokemon.store

@@ -12,7 +12,7 @@
 import { defineComponent } from "vue";
 
 import Sidebar from "primevue/sidebar";
-import { usePokedexStore } from "../common/store/pokedex.store";
+import { usePokemonStore } from "../common/store/pokemon.store";
 import { storeToRefs } from "pinia";
 import Pokemon from "./Pokemon.vue";
 
@@ -23,7 +23,7 @@ export default defineComponent({
 		Pokemon,
 	},
 	setup() {
-		const store = usePokedexStore();
+		const store = usePokemonStore();
 		const { showTeamSidebar, team } = storeToRefs(store);
 
 		return {
@@ -45,3 +45,4 @@ export default defineComponent({
 	margin: 1rem 0;
 }
 </style>
+../common/store/pokemon.store

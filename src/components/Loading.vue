@@ -9,7 +9,7 @@
 <script lang="ts">
 import { Icon } from "@iconify/vue";
 import { computed, defineComponent } from "vue";
-import { usePokedexStore } from "../common/store/pokedex.store";
+import { usePokemonStore } from "../common/store/pokemon.store";
 
 export default defineComponent({
 	name: "Loading",
@@ -17,7 +17,7 @@ export default defineComponent({
 		Icon,
 	},
 	setup() {
-		const store = usePokedexStore();
+		const store = usePokemonStore();
 		const loading = computed(() => store.loading);
 		return {
 			loading,
@@ -43,3 +43,4 @@ export default defineComponent({
 
 /* Apply the animation to an element */
 </style>
+../common/store/pokemon.store

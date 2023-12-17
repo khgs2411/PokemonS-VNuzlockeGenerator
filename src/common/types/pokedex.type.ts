@@ -74,3 +74,17 @@ export interface IRegionResponse {
 	// Version groups
 	version_groups: NamedAPIResource[];
 }
+
+export interface IEncountersDictionary {
+	locations: {
+		paldea: {
+			[key: string]: PokemonAPIResource[];
+		};
+		kitakami: {
+			[key: string]: PokemonAPIResource[];
+		};
+		terarium: {
+			[key: string]: PokemonAPIResource[];
+		};
+	};
+}

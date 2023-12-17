@@ -3,8 +3,9 @@ import vue from "@vitejs/plugin-vue";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
-  server: {
-    port: 8000,
-  },
+	plugins: [vue()],
+	base: "https:/khgs2411.github.io/PokemonS-VNuzlockeGenerator/",
+	server: {
+		port: 8000,
+	},
 });

@@ -100,9 +100,7 @@ export default defineComponent({
 		overflow: hidden;
 		overflow-x: auto;
 		display: flex;
-		// gap: 0.5rem;
 		align-items: center;
-		// justify-content: center;
 	}
 
 	.left {
@@ -113,7 +111,6 @@ export default defineComponent({
 		padding-right: 0.5rem;
 	}
 	.change-view {
-		// width: fit-content;
 		&:deep() {
 			.p-button {
 				font-size: 0.75rem;

@@ -1,31 +1,71 @@
 <template>
 	<nav class="layout-header">
 		<div class="left">
-			<div class="view"></div>
+			<div @click="showSettings" class="header-layout-element">Settings <Icon icon="mdi:cog" width="20px" /></div>
+			<Divider layout="vertical"></Divider>
+			<div class="change-view">
+				<SelectButton option-label="label" option-value="value" :options="viewOptions" v-model="view"></SelectButton>
+			</div>
 		</div>
-		<div class="right"></div>
+		<div class="right">
+			<div v-tooltip.bottom="'View Team'" @click="showTeam" class="header-layout-element"><Icon icon="mdi:pokeball" width="20px"></Icon>Team: {{ teamCount }} / 6</div>
+			<Divider layout="vertical"></Divider>
+			<div class="caught header-layout-element"><Icon icon="ic:baseline-catching-pokemon" :rotate="90" width="20px" /> Caught: {{ caughtCount }}</div>
+			<Divider layout="vertical"></Divider>
+			<div class="caught header-layout-element"><Icon icon="ic:baseline-catching-pokemon" :rotate="90" width="20px" /> Available Encounters: {{ currentArea?.availableEncounters }}</div>
+			<Divider layout="vertical"></Divider>
+		</div>
 	</nav>
 </template>
 
 <script lang="ts">
+import { storeToRefs } from "pinia";
 import SelectButton from "primevue/selectbutton";
-import { Ref, defineComponent, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
+import { useSettingsStore } from "../common/store/settings.store";
+import { useDataStore } from "../common/store/data.store";
+import { Icon } from "@iconify/vue";
+import Divider from "primevue/divider";
 
 export default defineComponent({
 	name: "LayoutHeader",
 	components: {
 		SelectButton,
+		Icon,
+		Divider,
 	},
 	setup() {
-		const view: Ref<"map" | "encounters"> = ref("encounters"); // "map" | "encounters
+		const store = useDataStore();
+		const settings = useSettingsStore();
+		const { view } = storeToRefs(settings);
+		const team = computed(() => store.team);
+		const caught = computed(() => store.caught);
+		const dead = computed(() => store.dead);
+		const teamCount = computed(() => team.value.length);
+		const caughtCount = computed(() => caught.value.length + dead.value.length);
+		const currentArea = computed(() => store.currentArea);
 		const viewOptions = ref([
-			{ label: "Show Encounters", value: "encounters" },
 			{ label: "Show Map", value: "map" },
+			{ label: "Show Encounters", value: "encounters" },
 		]);
 
+		function showTeam() {
+			if (!currentArea.value) return;
+			settings.showTeam = !settings.showTeam;
+		}
+
+		function showSettings() {
+			settings.sidebar = !settings.sidebar;
+		}
 		return {
+			teamCount,
+			caught,
+			caughtCount,
 			view,
 			viewOptions,
+			currentArea,
+			showTeam,
+			showSettings,
 		};
 	},
 });
@@ -43,6 +83,7 @@ export default defineComponent({
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	font-size: 0.75rem;
 
 	.left {
 		display: flex;
@@ -56,7 +97,25 @@ export default defineComponent({
 		gap: 0.5rem;
 		align-items: center;
 		justify-content: center;
+		flex-direction: row-reverse;
 		padding-right: 0.5rem;
+	}
+	.change-view {
+		&:deep() {
+			.p-button {
+				font-size: 0.75rem;
+				height: 31px;
+				border: none;
+				border-radius: 0;
+			}
+		}
+	}
+	.header-layout-element {
+		height: 100%;
+		display: flex;
+		align-items: center;
+		gap: 0.25rem;
+		cursor: pointer;
 	}
 }
 </style>

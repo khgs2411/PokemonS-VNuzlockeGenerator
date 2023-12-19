@@ -17,14 +17,14 @@
 						<template v-if="team.find((pokemon) => pokemon.name == selectedEncounter?.name)"> (Caught) </template>
 					</div>
 					<div class="actions">
-						<Button @click="caught" label="Caught">
+						<Button @click="catchPokemon(selectedEncounter)" label="Caught">
 							<template #icon>
 								<div class="action-icon">
 									<Icon icon="tabler:pokeball"></Icon>
 								</div>
 							</template>
 						</Button>
-						<Button severity="danger" @click="failed" label="Failed">
+						<Button severity="danger" @click="failCapture" label="Failed">
 							<template #icon>
 								<div class="action-icon">
 									<Icon icon="tabler:pokeball-off"></Icon>
@@ -59,7 +59,7 @@
 
 <script lang="ts">
 import { computed, defineComponent } from "vue";
-import { usePokemonStore } from "../common/store/pokemon.store";
+import { useDataStore } from "../common/store/data.store";
 import Lib from "../services/lib.services";
 import { Icon } from "@iconify/vue";
 import PokemonList from "./PokemonList.vue";
@@ -68,6 +68,8 @@ import { PokemonAPIResource } from "../common/types/pokedex.type";
 import { storeToRefs } from "pinia";
 import Divider from "primevue/divider";
 import { usePokedexStore } from "../common/store/pokedex.store";
+import { useSettingsStore } from "../common/store/settings.store";
+import { usePokemon } from "../common/composables/usePokemon";
 
 export default defineComponent({
 	name: "Encounters",
@@ -78,14 +80,14 @@ export default defineComponent({
 		Divider,
 	},
 	setup() {
-		const store = usePokemonStore();
+		const store = useDataStore();
+		const settings = useSettingsStore();
 		const pokedexStore = usePokedexStore();
-		const { generatedEncounterCount: generatedCount, selectedEncounter, showCheaterMessage, showTeamSidebar } = storeToRefs(store);
+		const { selectedEncounter, currentArea } = storeToRefs(store);
+		const { showCheaterMessage } = storeToRefs(settings);
 		const team = computed(() => store.team);
 		const region = computed(() => store.region);
-		const encounterPerArea = computed(() => store.encounterPerArea);
 		const pokedex = computed(() => pokedexStore.pokedex);
-		const locationInformation = computed(() => store.locationInformation);
 		const location = computed(() => store.location);
 		const encounters = computed(() => store.enocunters.locations.paldea);
 
@@ -115,46 +117,34 @@ export default defineComponent({
 		}
 
 		function generateEncounter() {
-			generatedCount.value++;
+			if (!currentArea.value) return;
 			selectedEncounter.value = Lib.getRandomItem(selectedLocationEncounters.value);
-			if (generatedCount.value > encounterPerArea.value) showCheaterMessage.value = true;
-		}
-
-		function caught() {
-			if (!selectedEncounter.value) return;
-			if (generatedCount.value > 1 && team.value.length > 0) {
-				team.value[team.value.length - 1] = selectedEncounter.value;
-			} else {
-				team.value.push(selectedEncounter.value);
+			if (!selectedEncounter.value) throw new Error("Something went wrong");
+			if (team.value.includes(selectedEncounter.value)) {
+				generateEncounter();
+				return;
 			}
-			selectedEncounter.value = undefined;
-			showTeamSidebar.value = true;
-			showCheaterMessage.value = false;
-		}
+			currentArea.value.generatedCount++;
+			currentArea.value.encounters.push(selectedEncounter.value);
+			if (currentArea.value.availableEncounters < currentArea.value.generatedCount) showCheaterMessage.value = true;
 
-		function failed() {
-			selectedEncounter.value = undefined;
-			showCheaterMessage.value = false;
+			currentArea.value.availableEncounters--;
+			if (currentArea.value.availableEncounters < 0) currentArea.value.availableEncounters = 0;
 		}
 
 		return {
 			encounters: encounters,
 			location: location,
-			locationInformation: locationInformation,
-			generatedCount: generatedCount,
 			region: region,
 			pokedex: pokedex,
-			team: team,
 			showCheaterMessage: showCheaterMessage,
 			locationHasEncounters: locationHasEncounters,
 			selectedLocationEncounters: selectedLocationEncounters,
-			selectedEncounter: selectedEncounter,
 			parseLocationName: parseLocationName,
 			isSelectedLocation: isSelectedLocation,
 			generateEncounter: generateEncounter,
-			caught: caught,
-			failed: failed,
 			Lib: Lib,
+			...usePokemon(),
 		};
 	},
 });
@@ -197,16 +187,6 @@ export default defineComponent({
 			display: block; /* Remove any extra space below the image (removes inline-block spacing) */
 			margin: 0 auto; /* Center the image horizontally (optional) */
 		}
-
-		.actions {
-			display: flex;
-			gap: 1rem;
-			margin: 0.6rem 0;
-
-			.action-icon {
-				margin: 0 0.3rem;
-			}
-		}
 	}
 
 	.cheater-message {
@@ -215,57 +195,4 @@ export default defineComponent({
 		height: fit-content;
 	}
 }
-
-/* Fade Transition */
-.fade-enter-active,
-.fade-leave-active {
-	transition: opacity 0.5s;
-}
-.fade-enter,
-.fade-leave-to {
-	opacity: 0;
-}
-
-/* Slide-in Transition */
-.slide-enter-active,
-.slide-leave-active {
-	transition: transform 0.5s;
-}
-.slide-enter,
-.slide-leave-to {
-	transform: translateX(100%);
-}
-
-/* Slide-out Transition */
-.slide-out-enter-active,
-.slide-out-leave-active {
-	transition: transform 0.5s;
-}
-.slide-out-enter,
-.slide-out-leave-to {
-	transform: translateX(-100%);
-}
-
-/* Fade-Slide-in Transition */
-.fade-slide-enter-active,
-.fade-slide-leave-active {
-	transition: all 0.5s;
-}
-.fade-slide-enter,
-.fade-slide-leave-to {
-	opacity: 0;
-	transform: translateX(100%);
-}
-
-/* Fade-Slide-out Transition */
-.fade-slide-out-enter-active,
-.fade-slide-out-leave-active {
-	transition: all 0.5s;
-}
-.fade-slide-out-enter,
-.fade-slide-out-leave-to {
-	opacity: 0;
-	transform: translateX(-100%);
-}
 </style>
-../common/store/pokemon.store

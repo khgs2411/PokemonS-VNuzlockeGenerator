@@ -1,16 +1,15 @@
 <template>
 	<div class="pokedex">
-		<!-- <div class="view">
-			<SelectButton option-label="label" option-value="value" :options="viewOptions" v-model="view"></SelectButton>
-		</div> -->
 		<div class="logos">
 			<img :class="[{ selected: version == 'scarlet' }]" src="../assets/Pokemon_Scarlet_Logo.png" @click="version = 'scarlet'" alt="scarlet" />
 			<img :class="[{ selected: version == 'violet' }]" src="../assets/Pokemon_Violet_Logo.png" @click="version = 'violet'" alt="violet" />
 		</div>
 		<template v-if="view == 'encounters'">
-			<Team />
-			<Location />
-			<Encounters />
+			<div class="content">
+				<PokemonBox />
+				<Location />
+				<Encounters />
+			</div>
 		</template>
 		<template v-if="view == 'map'">
 			<Map />
@@ -19,15 +18,16 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, onMounted, Ref } from "vue";
-import { usePokemonStore } from "../common/store/pokemon.store";
-import Lib from "../services/lib.services";
+import { storeToRefs } from "pinia";
+import SelectButton from "primevue/selectbutton";
+import { computed, defineComponent, onMounted } from "vue";
+import { useDataStore } from "../common/store/data.store";
+import { useSettingsStore } from "../common/store/settings.store";
+import Encounters from "../components/Encounters.vue";
 import Location from "../components/Location.vue";
 import Map from "../components/Map.vue";
-import { storeToRefs } from "pinia";
-import Encounters from "../components/Encounters.vue";
-import SelectButton from "primevue/selectbutton";
-import Team from "../components/Team.vue";
+import PokemonBox from "../components/PokemonBox.vue";
+import Lib from "../services/lib.services";
 
 export default defineComponent({
 	name: "Pokedex",
@@ -35,27 +35,22 @@ export default defineComponent({
 		Location,
 		Map,
 		Encounters,
-		Team,
+		PokemonBox,
 		SelectButton,
 	},
 	setup() {
-		const store = usePokemonStore();
+		const store = useDataStore();
+		const settings = useSettingsStore();
 		const { version } = storeToRefs(store);
-
-		const view: Ref<"map" | "encounters"> = ref("encounters"); // "map" | "encounters
-		const viewOptions = ref([
-			{ label: "Show Encounters", value: "encounters" },
-			{ label: "Show Map", value: "map" },
-		]);
+		const view = computed(() => settings.view);
 
 		onMounted(async () => {
 			await store.init();
 		});
 
 		return {
-			version,
 			view,
-			viewOptions,
+			version,
 			Lib,
 		};
 	},
@@ -66,31 +61,32 @@ export default defineComponent({
 .pokedex {
 	height: calc(100% - 32px);
 	width: 80%;
-	margin: 0 auto;
+	margin: auto;
 	display: flex;
 	flex-direction: column;
 	gap: 0.5rem;
 	position: relative;
-	.view {
-		position: absolute;
-		top: calc(32px + 0.5rem);
-		right: 0;
-		width: fit-content;
-		height: fit-content;
-	}
+
 	.logos {
+		height: 150px;
+		width: 100%;
 		display: flex;
 		justify-content: center;
 		gap: 1rem;
 		img {
 			cursor: pointer;
-			width: 300px;
-			height: auto;
+			height: 150px;
+			width: auto;
 			&:not(.selected) {
 				opacity: 0.3;
 			}
 		}
 	}
+
+	.content {
+		height: calc(100% - 150px);
+		overflow: hidden;
+		overflow-y: auto;
+	}
 }
 </style>
-../common/store/pokemon.store

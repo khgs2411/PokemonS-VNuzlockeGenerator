@@ -1,13 +1,13 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
-import { Ref, ref } from "vue";
+import { Ref, computed, reactive, ref } from "vue";
 import Lib from "../../services/lib.services";
 import Pokedex from "../../services/pokedex.service";
 import { ERegions } from "../enums/regions";
 import encounters_json from "../resources/encounters.json";
 import { IEncountersDictionary, IRegionResponse, NamedAPIResource, PokemonAPIResource } from "../types/pokedex.type";
 
-export const usePokemonStore = defineStore(
-	"pokemon.store",
+export const useDataStore = defineStore(
+	"data.store",
 	() => {
 		const loading: Ref<boolean> = ref(false);
 		const version: Ref<"scarlet" | "violet"> = ref("scarlet");
@@ -16,15 +16,14 @@ export const usePokemonStore = defineStore(
 		const generatedEncounterCount: Ref<number> = ref(0);
 		const selectedEncounter: Ref<PokemonAPIResource | undefined> = ref();
 		const pokemon: Ref<NamedAPIResource[]> = ref([]);
-		const encounterPerArea = ref(1);
-		const showCheaterMessage = ref(false);
-		const locationInformation: Ref<string | undefined> = ref();
-		const cacheLoaded = ref(false);
-		const showTeamSidebar = ref(false);
 		const team: Ref<PokemonAPIResource[]> = ref([]);
-
+		const inBox: Ref<PokemonAPIResource[]> = ref([]);
+		const caught: Ref<PokemonAPIResource[]> = ref([]);
+		const dead: Ref<PokemonAPIResource[]> = ref([]);
+		const forced: Ref<PokemonAPIResource[]> = ref([]);
 		const enocunters: IEncountersDictionary = JSON.parse(JSON.stringify(encounters_json));
-
+		const areas: { [key: string]: { generatedCount: number; availableEncounters: number; encounters: PokemonAPIResource[]; lastCapture: PokemonAPIResource | undefined } } = reactive({});
+		const currentArea = computed(() => (location.value ? areas[location.value] : undefined));
 		async function init() {
 			try {
 				await getRegion();
@@ -61,32 +60,31 @@ export const usePokemonStore = defineStore(
 		}
 
 		return {
-			loading: loading,
-			version: version,
-			region: region,
-			location: location,
-			showCheaterMessage: showCheaterMessage,
-			generatedEncounterCount: generatedEncounterCount,
-			locationInformation: locationInformation,
-			pokemon: pokemon,
-			selectedEncounter: selectedEncounter,
-			enocunters: enocunters,
-			encounterPerArea: encounterPerArea,
-			showTeamSidebar: showTeamSidebar,
-			cacheLoaded: cacheLoaded,
-			team: team,
-			init: init,
-			getRegion: getRegion,
-			getPokemonList: getPokemonList,
+			loading,
+			version,
+			region,
+			location,
+			generatedEncounterCount,
+			pokemon,
+			selectedEncounter,
+			enocunters,
+			team,
+			caught,
+			areas,
+			dead,
+			inBox,
+			forced,
+			currentArea,
+			init,
+			getRegion,
+			getPokemonList,
 		};
 	},
 	{
-		persist: {
-			debug: true,
-		},
+		persist: true,
 	},
 );
 
 if (import.meta.hot) {
-	import.meta.hot.accept(acceptHMRUpdate(usePokemonStore, import.meta.hot));
+	import.meta.hot.accept(acceptHMRUpdate(useDataStore, import.meta.hot));
 }

@@ -33,8 +33,8 @@ export const useDataStore = defineStore(
 			}
 		}
 
-		async function getRegion(name: ERegions = ERegions.PALDEA) {
-			if (!Lib.isNumpty(region.value)) return;
+		async function getRegion(name: ERegions = ERegions.PALDEA, force = false) {
+			if (!Lib.isNumpty(region.value) && !force) return;
 			loading.value = true;
 			try {
 				const response = await Pokedex.Region(name);

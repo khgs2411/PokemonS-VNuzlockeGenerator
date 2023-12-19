@@ -84,12 +84,12 @@ export default defineComponent({
 		const settings = useSettingsStore();
 		const pokedexStore = usePokedexStore();
 		const { selectedEncounter, currentArea } = storeToRefs(store);
-		const { showCheaterMessage } = storeToRefs(settings);
+		const { showCheaterMessage, currentRegion } = storeToRefs(settings);
 		const team = computed(() => store.team);
 		const region = computed(() => store.region);
 		const pokedex = computed(() => pokedexStore.pokedex);
 		const location = computed(() => store.location);
-		const encounters = computed(() => store.enocunters.locations.paldea);
+		const encounters = computed(() => store.enocunters.locations[currentRegion.value]);
 
 		const selectedLocationEncounters = computed((): PokemonAPIResource[] => {
 			const found = Object.keys(encounters.value).find((loc) => loc == location.value || parseLocationName(loc) == location.value);
@@ -135,7 +135,6 @@ export default defineComponent({
 		return {
 			encounters: encounters,
 			location: location,
-			region: region,
 			pokedex: pokedex,
 			showCheaterMessage: showCheaterMessage,
 			locationHasEncounters: locationHasEncounters,

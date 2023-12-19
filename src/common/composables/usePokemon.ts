@@ -6,7 +6,7 @@ import { PokemonAPIResource } from "../types/pokedex.type";
 export const usePokemon = () => {
 	const store = useDataStore();
 	const settings = useSettingsStore();
-	const { selectedEncounter, currentArea, team, caught, dead, inBox, forced, areas } = storeToRefs(store);
+	const { selectedEncounter, currentArea, team, caught, dead, inBox, forced, areas, region } = storeToRefs(store);
 	const { showTeam, showCheaterMessage } = storeToRefs(settings);
 
 	function catchPokemon(pokemon: PokemonAPIResource, force: boolean = false) {
@@ -96,6 +96,7 @@ export const usePokemon = () => {
 	}
 
 	return {
+		region,
 		inBox,
 		team,
 		dead,

@@ -1,3 +1,5 @@
 export enum ERegions {
-  PALDEA = "paldea",
+	PALDEA = "paldea",
+	KITAKAMI = "kitakami",
+	TERARIUM = "terarium",
 }

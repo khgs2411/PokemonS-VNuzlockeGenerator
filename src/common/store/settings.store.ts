@@ -1,6 +1,7 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
 import { Ref, reactive, ref } from "vue";
 import CacheService from "../../services/cache.service";
+import { ERegions } from "../enums/regions";
 
 export const useSettingsStore = defineStore(
 	"settings.store",
@@ -10,6 +11,7 @@ export const useSettingsStore = defineStore(
 		const sidebar = ref(false);
 		const encountersPerArea = ref(1);
 		const showCheaterMessage = ref(false);
+		const currentRegion = ref(ERegions.PALDEA);
 		const clauses = reactive({
 			dupes: true,
 			species: true,
@@ -27,6 +29,7 @@ export const useSettingsStore = defineStore(
 			showTeam,
 			clauses,
 			sidebar,
+			currentRegion,
 			resetCache,
 		};
 	},

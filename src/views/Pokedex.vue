@@ -60,7 +60,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .pokedex {
-	height: calc(100% - 32px);
+	height: calc(100% - 32px - 32px);
 	width: 80%;
 	margin: auto;
 	display: flex;

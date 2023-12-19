@@ -5,7 +5,7 @@
 			<Icon width="32" icon="mdi:pokemon-go" />
 			<Dropdown @update:model-value="onSelectLocation" filter placeholder="Select an area for an encounter" option-label="label" option-value="value" v-model="location" :options="locations"></Dropdown>
 			<div v-tooltip="'Finished all available encounters in this area'">
-				<Icon width="32" :rotate="90" icon="ic:baseline-catching-pokemon" v-if="location && areas[location].encounters.length > areas[location].availableEncounters" />
+				<Icon width="32" :rotate="90" icon="ic:baseline-catching-pokemon" v-if="location && areas[location]?.encounters.length > areas[location]?.availableEncounters" />
 			</div>
 		</div>
 	</div>
@@ -16,7 +16,7 @@ import { computed, defineComponent } from "vue";
 import Dropdown from "primevue/dropdown";
 import { useDataStore } from "../common/store/data.store";
 import Lib from "../services/lib.services";
-import { NamedAPIResource } from "../common/types/pokedex.type";
+// import { NamedAPIResource } from "../common/types/pokedex.type";
 import { storeToRefs } from "pinia";
 import { Icon } from "@iconify/vue";
 import { useSettingsStore } from "../common/store/settings.store";
@@ -32,17 +32,26 @@ export default defineComponent({
 		const store = useDataStore();
 		const { location, generatedEncounterCount, selectedEncounter, areas } = storeToRefs(store);
 		const settings = useSettingsStore();
-		const { showCheaterMessage } = storeToRefs(settings);
+		const { showCheaterMessage, currentRegion } = storeToRefs(settings);
 
+		/* TODO: Fix changing locations between Kitakami Paldea and Terarium */
 		const locations = computed((): { label: string; value: string }[] => {
-			return Lib.isNumpty(store.region?.locations)
+			return Lib.isNumpty(currentRegion.value)
+				? []
+				: Object.keys(store.enocunters.locations[currentRegion.value]).map((location: string) => {
+						return {
+							label: Lib.toTitleCase(location),
+							value: location,
+						};
+					});
+			/* return Lib.isNumpty(store.region?.locations)
 				? []
 				: (store.region?.locations as NamedAPIResource[]).map((location: NamedAPIResource) => {
 						return {
 							label: Lib.toTitleCase(location.name),
 							value: location.name,
 						};
-					});
+					}); */
 		});
 
 		function onSelectLocation(value: string) {

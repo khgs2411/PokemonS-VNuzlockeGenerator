@@ -6,6 +6,10 @@
 			<div class="change-view">
 				<SelectButton option-label="label" option-value="value" :options="viewOptions" v-model="view"></SelectButton>
 			</div>
+			<div class="change-view region">
+				Region:
+				<Dropdown option-label="label" option-value="value" :options="regionOptions" v-model="currentRegion"></Dropdown>
+			</div>
 		</div>
 		<div class="right">
 			<div v-tooltip.bottom="'View Team'" @click="showTeam" class="header-layout-element">
@@ -35,6 +39,10 @@ import { useSettingsStore } from "../common/store/settings.store";
 import { useDataStore } from "../common/store/data.store";
 import { Icon } from "@iconify/vue";
 import Divider from "primevue/divider";
+import Dropdown from "primevue/dropdown";
+import { ERegions } from "../common/enums/regions";
+import Lib from "../services/lib.services";
+import { usePokemon } from "../common/composables/usePokemon";
 
 export default defineComponent({
 	name: "LayoutHeader",
@@ -42,11 +50,12 @@ export default defineComponent({
 		SelectButton,
 		Icon,
 		Divider,
+		Dropdown,
 	},
 	setup() {
 		const store = useDataStore();
 		const settings = useSettingsStore();
-		const { view } = storeToRefs(settings);
+		const { view, currentRegion } = storeToRefs(settings);
 		const team = computed(() => store.team);
 		const caught = computed(() => store.caught);
 		const dead = computed(() => store.dead);
@@ -58,6 +67,12 @@ export default defineComponent({
 			{ label: "Show Encounters", value: "encounters" },
 		]);
 
+		const regionOptions = ref([
+			{ label: Lib.toTitleCase(ERegions.PALDEA), value: ERegions.PALDEA },
+			{ label: Lib.toTitleCase(ERegions.KITAKAMI), value: ERegions.KITAKAMI },
+			{ label: Lib.toTitleCase(ERegions.TERARIUM), value: ERegions.TERARIUM },
+		]);
+
 		function showTeam() {
 			if (!currentArea.value) return;
 			settings.showTeam = !settings.showTeam;
@@ -66,15 +81,20 @@ export default defineComponent({
 		function showSettings() {
 			settings.sidebar = !settings.sidebar;
 		}
+
 		return {
+			ERegions,
 			teamCount,
-			caught,
 			caughtCount,
 			view,
 			viewOptions,
 			currentArea,
+			regionOptions,
+			currentRegion,
 			showTeam,
 			showSettings,
+			getRegion: store.getRegion,
+			...usePokemon(),
 		};
 	},
 });
@@ -112,12 +132,20 @@ export default defineComponent({
 	}
 	.change-view {
 		&:deep() {
-			.p-button {
+			.p-button,
+			.p-dropdown {
 				font-size: 0.75rem;
 				height: 31px;
 				border: none;
 				border-radius: 0;
+
+				.p-dropdown-label {
+					font-size: 0.75rem;
+				}
 			}
+		}
+		&.region {
+			margin-left: 0.5rem;
 		}
 	}
 	.header-layout-element {

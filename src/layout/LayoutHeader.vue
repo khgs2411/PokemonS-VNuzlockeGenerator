@@ -3,9 +3,9 @@
 		<div class="left">
 			<div @click="showSettings" class="header-layout-element">Settings <Icon icon="mdi:cog" width="20px" /></div>
 			<Divider style="margin-right: 0" layout="vertical"></Divider>
-			<div class="change-view">
+			<!-- <div class="change-view">
 				<SelectButton option-label="label" option-value="value" :options="viewOptions" v-model="view"></SelectButton>
-			</div>
+			</div> -->
 			<div class="change-view region">
 				Region:
 				<Dropdown option-label="label" option-value="value" :options="regionOptions" v-model="currentRegion"></Dropdown>
@@ -131,6 +131,8 @@ export default defineComponent({
 		padding-right: 0.5rem;
 	}
 	.change-view {
+		width: fit-content;
+		white-space: nowrap;
 		&:deep() {
 			.p-button,
 			.p-dropdown {

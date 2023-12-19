@@ -1,16 +1,17 @@
 <template>
 	<LayoutHeader />
-	<Loading />
+	<Loading v-if="loading" />
 	<Pokedex />
 	<LayoutFooter />
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
 import Pokedex from "./views/Pokedex.vue";
 import Loading from "./components/Loading.vue";
 import LayoutHeader from "./layout/LayoutHeader.vue";
 import LayoutFooter from "./layout/LayoutFooter.vue";
+import { useDataStore } from "./common/store/data.store";
 
 export default defineComponent({
 	name: "App",
@@ -21,7 +22,11 @@ export default defineComponent({
 		LayoutFooter,
 	},
 	setup() {
-		// https://pokeapi.co/api/v2/region/{id or name}/
+		const store = useDataStore();
+		const loading = computed(() => store.loading);
+		return {
+			loading,
+		};
 	},
 });
 </script>

@@ -14,10 +14,16 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .footer {
+	position: absolute;
+	bottom: 0;
+	left: 0;
 	height: 32px;
 	font-size: 0.75rem;
 	display: flex;
 	align-items: center;
 	gap: 0.5rem;
+	white-space: nowrap;
+	overflow: hidden;
+	overflow-x: auto;
 }
 </style>

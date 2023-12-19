@@ -34,7 +34,6 @@ export default defineComponent({
 		const settings = useSettingsStore();
 		const { showCheaterMessage, currentRegion } = storeToRefs(settings);
 
-		/* TODO: Fix changing locations between Kitakami Paldea and Terarium */
 		const locations = computed((): { label: string; value: string }[] => {
 			return Lib.isNumpty(currentRegion.value)
 				? []
@@ -44,14 +43,6 @@ export default defineComponent({
 							value: location,
 						};
 					});
-			/* return Lib.isNumpty(store.region?.locations)
-				? []
-				: (store.region?.locations as NamedAPIResource[]).map((location: NamedAPIResource) => {
-						return {
-							label: Lib.toTitleCase(location.name),
-							value: location.name,
-						};
-					}); */
 		});
 
 		function onSelectLocation(value: string) {

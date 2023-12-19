@@ -2,17 +2,26 @@
 	<nav class="layout-header">
 		<div class="left">
 			<div @click="showSettings" class="header-layout-element">Settings <Icon icon="mdi:cog" width="20px" /></div>
-			<Divider layout="vertical"></Divider>
+			<Divider style="margin-right: 0" layout="vertical"></Divider>
 			<div class="change-view">
 				<SelectButton option-label="label" option-value="value" :options="viewOptions" v-model="view"></SelectButton>
 			</div>
 		</div>
 		<div class="right">
-			<div v-tooltip.bottom="'View Team'" @click="showTeam" class="header-layout-element"><Icon icon="mdi:pokeball" width="20px"></Icon>Team: {{ teamCount }} / 6</div>
+			<div v-tooltip.bottom="'View Team'" @click="showTeam" class="header-layout-element">
+				<Icon icon="mdi:pokeball" width="20px"></Icon>
+				<div class="text">Team: {{ teamCount }} / 6</div>
+			</div>
 			<Divider layout="vertical"></Divider>
-			<div class="caught header-layout-element"><Icon icon="ic:baseline-catching-pokemon" :rotate="90" width="20px" /> Caught: {{ caughtCount }}</div>
+			<div class="caught header-layout-element">
+				<Icon icon="ic:baseline-catching-pokemon" :rotate="90" width="20px" />
+				<div class="text">Caught: {{ caughtCount }}</div>
+			</div>
 			<Divider layout="vertical"></Divider>
-			<div class="caught header-layout-element"><Icon icon="ic:baseline-catching-pokemon" :rotate="90" width="20px" /> Available Encounters: {{ currentArea?.availableEncounters }}</div>
+			<div class="caught header-layout-element">
+				<Icon icon="ic:baseline-catching-pokemon" :rotate="90" width="20px" />
+				<div class="text">Available Encounters: {{ currentArea?.availableEncounters }}</div>
+			</div>
 			<Divider layout="vertical"></Divider>
 		</div>
 	</nav>
@@ -81,26 +90,30 @@ export default defineComponent({
 	top: 0;
 	left: 0;
 	display: flex;
-	justify-content: space-between;
 	align-items: center;
 	font-size: 0.75rem;
 
-	.left {
+	.left,
+	.right {
+		width: fit-content;
+		flex: 1;
+		overflow: hidden;
+		overflow-x: auto;
 		display: flex;
-		gap: 0.5rem;
+		// gap: 0.5rem;
 		align-items: center;
-		justify-content: center;
+		// justify-content: center;
+	}
+
+	.left {
 		padding-left: 0.5rem;
 	}
 	.right {
-		display: flex;
-		gap: 0.5rem;
-		align-items: center;
-		justify-content: center;
 		flex-direction: row-reverse;
 		padding-right: 0.5rem;
 	}
 	.change-view {
+		// width: fit-content;
 		&:deep() {
 			.p-button {
 				font-size: 0.75rem;
@@ -116,6 +129,8 @@ export default defineComponent({
 		align-items: center;
 		gap: 0.25rem;
 		cursor: pointer;
+		width: fit-content;
+		white-space: nowrap;
 	}
 }
 </style>

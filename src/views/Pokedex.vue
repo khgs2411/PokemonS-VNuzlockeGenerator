@@ -1,4 +1,5 @@
 <template>
+	<div style="height: 32px"></div>
 	<div class="pokedex">
 		<div class="logos">
 			<img :class="[{ selected: version == 'scarlet' }]" src="../assets/Pokemon_Scarlet_Logo.png" @click="version = 'scarlet'" alt="scarlet" />
@@ -68,14 +69,14 @@ export default defineComponent({
 	position: relative;
 
 	.logos {
-		height: 150px;
+		height: 8rem;
 		width: 100%;
 		display: flex;
 		justify-content: center;
 		gap: 1rem;
 		img {
 			cursor: pointer;
-			height: 150px;
+			height: 8rem;
 			width: auto;
 			&:not(.selected) {
 				opacity: 0.3;

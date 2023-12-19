@@ -21,14 +21,12 @@ body {
 	padding: 0;
 }
 
-body {
-	padding: 8px;
-}
-
 #app {
 	height: 100%;
 	overflow: hidden;
 	overflow-y: auto;
+	position: relative;
+	padding: 8px;
 }
 
 .spinner {

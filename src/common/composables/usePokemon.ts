@@ -1,8 +1,8 @@
 import { storeToRefs } from "pinia";
+import { watch } from "vue";
 import { useDataStore } from "../store/data.store";
 import { useSettingsStore } from "../store/settings.store";
 import { PokemonAPIResource } from "../types/pokedex.type";
-import { computed, watch } from "vue";
 
 export const usePokemon = () => {
 	const store = useDataStore();

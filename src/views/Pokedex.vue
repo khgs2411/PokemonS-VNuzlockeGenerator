@@ -10,6 +10,7 @@
 				<PokemonBox />
 				<Location />
 				<Encounters />
+				<Settings />
 			</div>
 		</template>
 		<template v-if="view == 'map'">
@@ -29,6 +30,7 @@ import Location from "../components/Location.vue";
 import Map from "../components/Map.vue";
 import PokemonBox from "../components/PokemonBox.vue";
 import Lib from "../services/lib.services";
+import Settings from "../components/Settings.vue";
 
 export default defineComponent({
 	name: "Pokedex",
@@ -38,6 +40,7 @@ export default defineComponent({
 		Encounters,
 		PokemonBox,
 		SelectButton,
+		Settings,
 	},
 	setup() {
 		const store = useDataStore();

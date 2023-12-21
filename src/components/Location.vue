@@ -51,6 +51,7 @@ export default defineComponent({
 				areas.value[value] = {
 					encounters: [],
 					generatedCount: 0,
+					defaultAvailableEncounters: settings.encountersPerArea,
 					availableEncounters: settings.encountersPerArea,
 					lastCapture: undefined,
 				};

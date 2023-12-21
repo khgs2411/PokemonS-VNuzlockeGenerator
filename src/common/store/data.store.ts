@@ -22,7 +22,7 @@ export const useDataStore = defineStore(
 		const dead: Ref<PokemonAPIResource[]> = ref([]);
 		const forced: Ref<PokemonAPIResource[]> = ref([]);
 		const enocunters: IEncountersDictionary = JSON.parse(JSON.stringify(encounters_json));
-		const areas: { [key: string]: { generatedCount: number; availableEncounters: number; encounters: PokemonAPIResource[]; lastCapture: PokemonAPIResource | undefined } } = reactive({});
+		const areas: { [key: string]: { generatedCount: number; availableEncounters: number; defaultAvailableEncounters: number; encounters: PokemonAPIResource[]; lastCapture: PokemonAPIResource | undefined } } = reactive({});
 		const currentArea = computed(() => (location.value ? areas[location.value] : undefined));
 		async function init() {
 			try {

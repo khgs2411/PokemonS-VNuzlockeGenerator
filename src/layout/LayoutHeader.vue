@@ -3,11 +3,8 @@
 		<div class="left">
 			<div @click="showSettings" class="header-layout-element">Settings <Icon icon="mdi:cog" width="20px" /></div>
 			<Divider style="margin-right: 0" layout="vertical"></Divider>
-			<!-- <div class="change-view">
-				<SelectButton option-label="label" option-value="value" :options="viewOptions" v-model="view"></SelectButton>
-			</div> -->
 			<div class="change-view region">
-				Region:
+				<div>Region:</div>
 				<Dropdown option-label="label" option-value="value" :options="regionOptions" v-model="currentRegion"></Dropdown>
 			</div>
 		</div>
@@ -148,6 +145,9 @@ export default defineComponent({
 		}
 		&.region {
 			margin-left: 0.5rem;
+			display: flex;
+			gap: 0.5rem;
+			align-items: baseline;
 		}
 	}
 	.header-layout-element {

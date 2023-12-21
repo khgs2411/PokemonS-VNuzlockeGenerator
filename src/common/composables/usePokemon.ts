@@ -2,6 +2,7 @@ import { storeToRefs } from "pinia";
 import { useDataStore } from "../store/data.store";
 import { useSettingsStore } from "../store/settings.store";
 import { PokemonAPIResource } from "../types/pokedex.type";
+import { computed, watch } from "vue";
 
 export const usePokemon = () => {
 	const store = useDataStore();
@@ -53,6 +54,7 @@ export const usePokemon = () => {
 		settings.showCheaterMessage = false;
 		Object.keys(store.areas).forEach((area) => {
 			store.areas[area].availableEncounters = settings.encountersPerArea;
+			store.areas[area].defaultAvailableEncounters = settings.encountersPerArea;
 			store.areas[area].encounters = [];
 			store.areas[area].generatedCount = 0;
 		});
@@ -94,6 +96,17 @@ export const usePokemon = () => {
 			inBox.value.push(pokemon);
 		}
 	}
+
+	watch(
+		() => settings.encountersPerArea,
+		(newValue) => {
+			Object.keys(store.areas).forEach((area) => {
+				console.log(newValue, store.areas[area].defaultAvailableEncounters, store.areas[area].availableEncounters);
+				store.areas[area].availableEncounters = store.areas[area].availableEncounters + newValue - store.areas[area].defaultAvailableEncounters;
+				store.areas[area].defaultAvailableEncounters = newValue;
+			});
+		},
+	);
 
 	return {
 		region,

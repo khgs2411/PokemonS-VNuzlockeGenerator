@@ -56,11 +56,6 @@
 				</div>
 			</TabPanel>
 		</TabView>
-		<div class="reset-btn" v-tooltip.left="'Clicking here will reset all progress up to this point'">
-			<Button text @click="resetCaptures">
-				<template #icon> <Icon width="28px" icon="tabler:pokeball-off" /> </template
-			></Button>
-		</div>
 	</Sidebar>
 </template>
 
@@ -179,13 +174,5 @@ export default defineComponent({
 
 	// align-items: center;
 	gap: 1rem;
-}
-.reset-btn {
-	width: fit-content;
-	display: flex;
-	height: fit-content;
-	align-items: center;
-	justify-content: flex-end;
-	float: right;
 }
 </style>

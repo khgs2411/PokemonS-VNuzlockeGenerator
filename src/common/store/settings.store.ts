@@ -9,9 +9,11 @@ export const useSettingsStore = defineStore(
 		const view: Ref<"map" | "encounters"> = ref("encounters"); // "map" | "encounters
 		const showTeam = ref(false);
 		const sidebar = ref(false);
-		const encountersPerArea = ref(1);
+		const encountersPerArea = ref(3);
 		const showCheaterMessage = ref(false);
 		const currentRegion = ref(ERegions.PALDEA);
+		const nuzlockeRules = ref("");
+		const note = ref("");
 		const clauses = reactive({
 			dupes: true,
 			species: true,
@@ -30,6 +32,8 @@ export const useSettingsStore = defineStore(
 			clauses,
 			sidebar,
 			currentRegion,
+			nuzlockeRules,
+			note,
 			resetCache,
 		};
 	},

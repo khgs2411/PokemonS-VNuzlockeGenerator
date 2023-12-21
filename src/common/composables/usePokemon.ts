@@ -29,9 +29,17 @@ export const usePokemon = () => {
 			caught.value[caughtIndex] = pokemon;
 		}
 
-		if (!force) currentArea.value.lastCapture = pokemon;
+		console.log(force);
+
+		if (!force) {
+			currentArea.value.lastCapture = pokemon;
+			currentArea.value.encounters.push(pokemon);
+			currentArea.value.availableEncounters--;
+			if (currentArea.value.availableEncounters < 0) currentArea.value.availableEncounters = 0;
+		}
 
 		showTeam.value = true;
+
 		resetEncounter();
 	}
 
@@ -42,6 +50,9 @@ export const usePokemon = () => {
 	function resetEncounter() {
 		selectedEncounter.value = undefined;
 		showCheaterMessage.value = false;
+		if (currentArea.value) {
+			currentArea.value.generatedCount = 0;
+		}
 	}
 
 	function resetCaptures() {

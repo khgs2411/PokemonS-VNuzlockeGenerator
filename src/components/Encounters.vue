@@ -85,7 +85,6 @@ export default defineComponent({
 		const pokedexStore = usePokedexStore();
 		const { selectedEncounter, currentArea } = storeToRefs(store);
 		const { showCheaterMessage, currentRegion } = storeToRefs(settings);
-		const team = computed(() => store.team);
 		const region = computed(() => store.region);
 		const pokedex = computed(() => pokedexStore.pokedex);
 		const location = computed(() => store.location);
@@ -120,16 +119,8 @@ export default defineComponent({
 			if (!currentArea.value) return;
 			selectedEncounter.value = Lib.getRandomItem(selectedLocationEncounters.value);
 			if (!selectedEncounter.value) throw new Error("Something went wrong");
-			if (team.value.includes(selectedEncounter.value)) {
-				generateEncounter();
-				return;
-			}
+			if (currentArea.value.generatedCount > 0 || currentArea.value.availableEncounters <= 0) showCheaterMessage.value = true;
 			currentArea.value.generatedCount++;
-			currentArea.value.encounters.push(selectedEncounter.value);
-			if (currentArea.value.availableEncounters < currentArea.value.generatedCount) showCheaterMessage.value = true;
-
-			currentArea.value.availableEncounters--;
-			if (currentArea.value.availableEncounters < 0) currentArea.value.availableEncounters = 0;
 		}
 
 		return {

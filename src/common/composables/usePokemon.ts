@@ -29,8 +29,6 @@ export const usePokemon = () => {
 			caught.value[caughtIndex] = pokemon;
 		}
 
-		console.log(force);
-
 		if (!force) {
 			currentArea.value.lastCapture = pokemon;
 			currentArea.value.encounters.push(pokemon);

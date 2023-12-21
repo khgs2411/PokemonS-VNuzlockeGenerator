@@ -13,9 +13,11 @@ export const usePokemon = () => {
 	function catchPokemon(pokemon: PokemonAPIResource, force: boolean = false) {
 		if (!pokemon || !currentArea.value) return;
 
-		const replaceCurrentEncounter = currentArea.value.generatedCount > 1 && currentArea.value.availableEncounters <= currentArea.value.generatedCount && currentArea.value.lastCapture;
+		const replaceCurrentEncounter = currentArea.value.availableEncounters == 0 && currentArea.value.lastCapture;
 		const shouldAddToTeam = team.value.length < 6;
-
+		console.log(currentArea.value.availableEncounters);
+		console.log("replaceCurrentEncounter", replaceCurrentEncounter);
+		console.log("force: ", force);
 		if (force || !replaceCurrentEncounter) {
 			if (shouldAddToTeam) team.value.push(pokemon);
 			else inBox.value.push(pokemon);

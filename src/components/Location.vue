@@ -5,7 +5,7 @@
 			<Icon width="32" icon="mdi:pokemon-go" />
 			<Dropdown @update:model-value="onSelectLocation" filter placeholder="Select an area for an encounter" option-label="label" option-value="value" v-model="location" :options="locations"></Dropdown>
 			<div v-tooltip="'Finished all available encounters in this area'">
-				<Icon width="32" :rotate="90" icon="ic:baseline-catching-pokemon" v-if="location && areas[location]?.encounters.length > areas[location]?.availableEncounters" />
+				<Icon width="32" :rotate="90" icon="ic:baseline-catching-pokemon" v-if="location && areas[location]?.availableEncounters == 0" />
 			</div>
 		</div>
 	</div>

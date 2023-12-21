@@ -7,6 +7,10 @@
 				<div>Region:</div>
 				<Dropdown option-label="label" option-value="value" :options="regionOptions" v-model="currentRegion"></Dropdown>
 			</div>
+			<div class="change-view gym">
+				<div>Next Gym / Titan / Team Star Encounter:</div>
+				<div @click="nextGym" @click.right.prevent.stop="prevGym" class="name-of-location">{{ gymEncounter }}</div>
+			</div>
 		</div>
 		<div class="right">
 			<div v-tooltip.bottom="'View Team'" @click="showTeam" class="header-layout-element">
@@ -52,7 +56,8 @@ export default defineComponent({
 	setup() {
 		const store = useDataStore();
 		const settings = useSettingsStore();
-		const { view, currentRegion } = storeToRefs(settings);
+		const { view, currentRegion, gym_num } = storeToRefs(settings);
+		const gymEncounter = computed(() => settings.gymEncounters);
 		const team = computed(() => store.team);
 		const caught = computed(() => store.caught);
 		const dead = computed(() => store.dead);
@@ -79,6 +84,18 @@ export default defineComponent({
 			settings.sidebar = !settings.sidebar;
 		}
 
+		function nextGym() {
+			if ((settings.gyms as { [key: number]: string })[settings.gym_num + 1]) {
+				settings.gym_num = settings.gym_num + 1;
+			}
+		}
+
+		function prevGym() {
+			if ((settings.gyms as { [key: number]: string })[settings.gym_num - 1]) {
+				settings.gym_num = settings.gym_num - 1;
+			}
+		}
+
 		return {
 			ERegions,
 			teamCount,
@@ -87,7 +104,11 @@ export default defineComponent({
 			viewOptions,
 			currentArea,
 			regionOptions,
+			gym_num,
+			gymEncounter,
 			currentRegion,
+			nextGym,
+			prevGym,
 			showTeam,
 			showSettings,
 			getRegion: store.getRegion,
@@ -121,6 +142,7 @@ export default defineComponent({
 	}
 
 	.left {
+		height: 100%;
 		padding-left: 0.5rem;
 	}
 	.right {
@@ -128,6 +150,7 @@ export default defineComponent({
 		padding-right: 0.5rem;
 	}
 	.change-view {
+		height: 100%;
 		width: fit-content;
 		white-space: nowrap;
 		&:deep() {
@@ -148,6 +171,20 @@ export default defineComponent({
 			display: flex;
 			gap: 0.5rem;
 			align-items: baseline;
+		}
+		&.gym {
+			padding: 0 0.5rem;
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			.name-of-location {
+				display: flex;
+				align-items: center;
+				height: 100%;
+				cursor: pointer;
+				background: #121212;
+				padding: 0 0.5rem;
+			}
 		}
 	}
 	.header-layout-element {

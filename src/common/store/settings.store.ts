@@ -1,7 +1,8 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
-import { Ref, reactive, ref } from "vue";
+import { Ref, computed, reactive, ref } from "vue";
 import CacheService from "../../services/cache.service";
 import { ERegions } from "../enums/regions";
+import { gyms } from "../resources/gyms";
 
 export const useSettingsStore = defineStore(
 	"settings.store",
@@ -19,6 +20,8 @@ export const useSettingsStore = defineStore(
 			species: true,
 			shiny: true,
 		});
+		const gym_num = ref(0);
+		const gymEncounters = computed(() => (gyms as { [key: number]: string })[gym_num.value]);
 
 		function resetCache() {
 			CacheService.resetCache("settings.store");
@@ -34,6 +37,9 @@ export const useSettingsStore = defineStore(
 			currentRegion,
 			nuzlockeRules,
 			note,
+			gymEncounters,
+			gym_num,
+			gyms,
 			resetCache,
 		};
 	},

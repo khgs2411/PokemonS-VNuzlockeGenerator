@@ -9,7 +9,10 @@
 			</div>
 			<div class="change-view gym">
 				<div>Next Gym / Titan / Team Star Encounter:</div>
-				<div @click="nextGym" @click.right.prevent.stop="prevGym" class="name-of-location">{{ gymEncounter }}</div>
+				<div @click.prevent.stop="nextGym" @click.right.prevent.stop="prevGym" class="name-of-location">{{ gymEncounter }}</div>
+				<div class="go-back-encounter" @click.prevent.stop="prevGym">
+					<Icon icon="mdi:arrow-left" width="20px"></Icon>
+				</div>
 			</div>
 		</div>
 		<div class="right">
@@ -184,6 +187,12 @@ export default defineComponent({
 				cursor: pointer;
 				background: #121212;
 				padding: 0 0.5rem;
+			}
+			.go-back-encounter {
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				height: 100%;
 			}
 		}
 	}

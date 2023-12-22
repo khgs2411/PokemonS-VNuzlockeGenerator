@@ -14,7 +14,6 @@ export const useDataStore = defineStore(
 		const region: Ref<IRegionResponse | undefined> = ref();
 		const location: Ref<string | undefined> = ref();
 		const generatedEncounterCount: Ref<number> = ref(0);
-		const selectedEncounter: Ref<PokemonAPIResource | undefined> = ref();
 		const pokemon: Ref<NamedAPIResource[]> = ref([]);
 		const team: Ref<PokemonAPIResource[]> = ref([]);
 		const inBox: Ref<PokemonAPIResource[]> = ref([]);
@@ -66,7 +65,6 @@ export const useDataStore = defineStore(
 			location,
 			generatedEncounterCount,
 			pokemon,
-			selectedEncounter,
 			enocunters,
 			team,
 			caught,

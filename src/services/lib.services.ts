@@ -29,8 +29,12 @@ class Lib {
 		};
 	}
 
-	public static getRandomItem(array: any[]) {
-		return array[Math.floor(Math.random() * array.length)];
+	public static getRandomItem<T>(array: any[], notIn: any[]): T {
+		let selection = array[Math.floor(Math.random() * array.length)];
+		if (notIn.includes(selection)) {
+			return this.getRandomItem(array, notIn);
+		}
+		return selection;
 	}
 }
 export default Lib;

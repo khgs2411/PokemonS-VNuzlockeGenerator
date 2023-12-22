@@ -7,7 +7,7 @@ import { PokemonAPIResource } from "../types/pokedex.type";
 export const usePokemon = () => {
 	const store = useDataStore();
 	const settings = useSettingsStore();
-	const { selectedEncounter, currentArea, team, caught, dead, inBox, forced, areas, region } = storeToRefs(store);
+	const { currentArea, team, caught, dead, inBox, forced, areas, region } = storeToRefs(store);
 	const { showTeam, showCheaterMessage } = storeToRefs(settings);
 
 	function catchPokemon(pokemon: PokemonAPIResource, force: boolean = false) {
@@ -30,22 +30,25 @@ export const usePokemon = () => {
 
 		if (!force) {
 			currentArea.value.lastCapture = pokemon;
-			currentArea.value.encounters.push(pokemon);
 			currentArea.value.availableEncounters--;
 			if (currentArea.value.availableEncounters < 0) currentArea.value.availableEncounters = 0;
 		}
-
+		currentArea.value.encounters = currentArea.value.encounters.filter((encounter) => encounter.name !== pokemon.name);
 		showTeam.value = true;
-
-		resetEncounter();
+		if (currentArea.value.encounters.length == 0) {
+			resetEncounter();
+		}
 	}
 
-	function failCapture() {
+	function failCapture(pokemon: PokemonAPIResource) {
+		if (!pokemon || !currentArea.value) return;
+		currentArea.value.encounters = currentArea.value.encounters.filter((encounter) => encounter.name !== pokemon.name);
+		currentArea.value.availableEncounters--;
+		if (currentArea.value.availableEncounters < 0) currentArea.value.availableEncounters = 0;
 		resetEncounter();
 	}
 
 	function resetEncounter() {
-		selectedEncounter.value = undefined;
 		showCheaterMessage.value = false;
 		if (currentArea.value) {
 			currentArea.value.generatedCount = 0;
@@ -58,7 +61,6 @@ export const usePokemon = () => {
 		dead.value = [];
 		inBox.value = [];
 		caught.value = [];
-		store.selectedEncounter = undefined;
 		settings.showCheaterMessage = false;
 		Object.keys(store.areas).forEach((area) => {
 			store.areas[area].availableEncounters = settings.encountersPerArea;
@@ -109,7 +111,6 @@ export const usePokemon = () => {
 		() => settings.encountersPerArea,
 		(newValue) => {
 			Object.keys(store.areas).forEach((area) => {
-				console.log(newValue, store.areas[area].defaultAvailableEncounters, store.areas[area].availableEncounters);
 				store.areas[area].availableEncounters = store.areas[area].availableEncounters + newValue - store.areas[area].defaultAvailableEncounters;
 				store.areas[area].defaultAvailableEncounters = newValue;
 			});
@@ -124,7 +125,6 @@ export const usePokemon = () => {
 		caught,
 		forced,
 		areas,
-		selectedEncounter,
 		catchPokemon,
 		failCapture,
 		resetCaptures,

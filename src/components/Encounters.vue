@@ -1,39 +1,43 @@
 <template>
 	<div class="encounters">
 		<div class="generator" v-if="locationHasEncounters">
-			<Button @click="generateEncounter" outlined raised label="Generate an Encounter">
+			<Button :disabled="currentArea?.availableEncounters == 0" @click="generateEncounter" outlined raised label="Generate an Encounter">
 				<template #icon>
 					<div class="icon"><Icon width="32" icon="mdi:pokeball"></Icon></div>
 				</template>
 			</Button>
-			<transition name="fade-slide">
-				<div class="encounter" v-if="selectedEncounter">
-					<div class="image-container">
-						<img v-if="pokedex[selectedEncounter.id]" :alt="selectedEncounter.name" :src="pokedex[selectedEncounter.id]?.sprites.front_default ?? ''" />
-						<Icon v-else width="50px" icon="mdi:pokeball"></Icon>
-					</div>
-					<div class="encounter-name">
-						{{ Lib.toTitleCase(selectedEncounter.name) }}
-						<template v-if="team.find((pokemon) => pokemon.name == selectedEncounter?.name)"> (Caught) </template>
-					</div>
-					<div class="actions">
-						<Button @click="catchPokemon(selectedEncounter)" label="Caught">
-							<template #icon>
-								<div class="action-icon">
-									<Icon icon="tabler:pokeball"></Icon>
-								</div>
-							</template>
-						</Button>
-						<Button severity="danger" @click="failCapture" label="Failed">
-							<template #icon>
-								<div class="action-icon">
-									<Icon icon="tabler:pokeball-off"></Icon>
-								</div>
-							</template>
-						</Button>
-					</div>
-				</div>
-			</transition>
+			<div class="selection">
+				<template v-for="encounter in currentArea?.encounters">
+					<transition name="fade-slide">
+						<div class="encounter" v-if="encounter">
+							<div class="image-container">
+								<img v-if="pokedex[encounter.id]" :alt="encounter.name" :src="pokedex[encounter.id]?.sprites.front_default ?? ''" />
+								<Icon v-else width="50px" icon="mdi:pokeball"></Icon>
+							</div>
+							<div class="encounter-name">
+								{{ Lib.toTitleCase(encounter.name) }}
+								<template v-if="team.find((pokemon) => pokemon.name == encounter?.name)"> (Caught) </template>
+							</div>
+							<div class="actions">
+								<Button @click="catchPokemon(encounter)" label="Caught">
+									<template #icon>
+										<div class="action-icon">
+											<Icon icon="tabler:pokeball"></Icon>
+										</div>
+									</template>
+								</Button>
+								<Button severity="danger" @click="failCapture(encounter)" label="Failed">
+									<template #icon>
+										<div class="action-icon">
+											<Icon icon="tabler:pokeball-off"></Icon>
+										</div>
+									</template>
+								</Button>
+							</div>
+						</div>
+					</transition>
+				</template>
+			</div>
 		</div>
 		<div class="cheater-message" v-if="showCheaterMessage">
 			<p>You little cheater ;)</p>
@@ -83,7 +87,7 @@ export default defineComponent({
 		const store = useDataStore();
 		const settings = useSettingsStore();
 		const pokedexStore = usePokedexStore();
-		const { selectedEncounter, currentArea } = storeToRefs(store);
+		const { currentArea } = storeToRefs(store);
 		const { showCheaterMessage, currentRegion } = storeToRefs(settings);
 		const region = computed(() => store.region);
 		const pokedex = computed(() => pokedexStore.pokedex);
@@ -117,23 +121,30 @@ export default defineComponent({
 
 		function generateEncounter() {
 			if (!currentArea.value) return;
-			selectedEncounter.value = Lib.getRandomItem(selectedLocationEncounters.value);
-			if (!selectedEncounter.value) throw new Error("Something went wrong");
+			if (currentArea.value.encounters.length > 0) {
+				currentArea.value.encounters = [];
+			}
+			for (let i = 0; i < currentArea.value.availableEncounters; i++) {
+				const pokemon = Lib.getRandomItem<PokemonAPIResource>(selectedLocationEncounters.value, currentArea.value.encounters);
+				if (!pokemon) throw new Error("Something went wrong");
+				currentArea.value.encounters.push(pokemon);
+			}
 			if (currentArea.value.generatedCount > 0 || currentArea.value.availableEncounters <= 0) showCheaterMessage.value = true;
 			currentArea.value.generatedCount++;
 		}
 
 		return {
-			encounters: encounters,
-			location: location,
-			pokedex: pokedex,
-			showCheaterMessage: showCheaterMessage,
-			locationHasEncounters: locationHasEncounters,
-			selectedLocationEncounters: selectedLocationEncounters,
-			parseLocationName: parseLocationName,
-			isSelectedLocation: isSelectedLocation,
-			generateEncounter: generateEncounter,
-			Lib: Lib,
+			currentArea,
+			encounters,
+			location,
+			pokedex,
+			showCheaterMessage,
+			locationHasEncounters,
+			selectedLocationEncounters,
+			parseLocationName,
+			isSelectedLocation,
+			generateEncounter,
+			Lib,
 			...usePokemon(),
 		};
 	},
@@ -155,16 +166,20 @@ export default defineComponent({
 		.icon {
 			margin: 0 0.3rem;
 		}
-
-		.encounter {
+		.selection {
 			display: flex;
-			flex-direction: column;
-			align-items: center;
+			flex-wrap: wrap;
+			justify-content: center;
+			gap: 1rem;
+			.encounter {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
 
-			.encounter-name {
+				.encounter-name {
+				}
 			}
 		}
-
 		.image-container {
 			max-width: 100%; /* Ensure the container does not exceed its parent's width */
 			margin: 0 auto; /* Center the container horizontally (optional) */

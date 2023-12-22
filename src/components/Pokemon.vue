@@ -57,6 +57,7 @@ export default defineComponent({
 		const loading = computed(() => pokedexStore.loading);
 		const pokedex = computed(() => pokedexStore.pokedex);
 		const pokemonData = computed(() => pokedex.value[pokemonId.value]);
+		const currentArea = computed(() => store.currentArea);
 		const canCheat = computed(() => (settings.showCheaterMessage && store.currentArea ? store.currentArea.generatedCount > 1 : false));
 		const pokemonId = computed(() => getPokemonId());
 
@@ -88,7 +89,9 @@ export default defineComponent({
 
 		function selectPokemonAsAnEncounter(pokemon: PokemonAPIResource) {
 			if (!canCheat.value) return;
-			store.selectedEncounter = pokemon;
+			// remove the first item and push the new one from currentArea.value.encounters
+			currentArea.value?.encounters?.shift();
+			currentArea.value?.encounters?.push(pokemon);
 			settings.showCheaterMessage = false;
 		}
 

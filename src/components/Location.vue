@@ -30,7 +30,7 @@ export default defineComponent({
 	},
 	setup() {
 		const store = useDataStore();
-		const { location, generatedEncounterCount, selectedEncounter, areas } = storeToRefs(store);
+		const { location, generatedEncounterCount, areas } = storeToRefs(store);
 		const settings = useSettingsStore();
 		const { showCheaterMessage, currentRegion } = storeToRefs(settings);
 
@@ -57,7 +57,6 @@ export default defineComponent({
 				};
 			}
 			showCheaterMessage.value = false;
-			selectedEncounter.value = undefined;
 		}
 
 		return {

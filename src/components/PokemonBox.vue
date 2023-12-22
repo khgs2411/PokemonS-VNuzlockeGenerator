@@ -45,7 +45,7 @@
 								</div>
 							</template>
 						</Button>
-						<Button severity="danger" @click="failCapture" label="Cancel">
+						<Button severity="danger" @click="failCapture(pokemonData)" label="Cancel">
 							<template #icon>
 								<div class="action-icon">
 									<Icon icon="tabler:pokeball-off"></Icon>

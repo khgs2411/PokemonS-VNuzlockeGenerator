@@ -32,8 +32,8 @@ export const usePokemon = () => {
 			currentArea.value.lastCapture = pokemon;
 			currentArea.value.availableEncounters--;
 			if (currentArea.value.availableEncounters < 0) currentArea.value.availableEncounters = 0;
+			currentArea.value.encounters = currentArea.value.encounters.filter((encounter) => encounter.name !== pokemon.name);
 		}
-		currentArea.value.encounters = currentArea.value.encounters.filter((encounter) => encounter.name !== pokemon.name);
 		showTeam.value = true;
 		if (currentArea.value.encounters.length == 0) {
 			resetEncounter();

@@ -19,14 +19,14 @@
 								<template v-if="team.find((pokemon) => pokemon.name == encounter?.name)"> (Caught) </template>
 							</div>
 							<div class="actions">
-								<Button @click="catchPokemon(encounter)" label="Caught">
+								<Button @click="() => catchPokemon(encounter)" label="Caught">
 									<template #icon>
 										<div class="action-icon">
 											<Icon icon="tabler:pokeball"></Icon>
 										</div>
 									</template>
 								</Button>
-								<Button severity="danger" @click="failCapture(encounter)" label="Failed">
+								<Button severity="danger" @click="() => failCapture(encounter)" label="Failed">
 									<template #icon>
 										<div class="action-icon">
 											<Icon icon="tabler:pokeball-off"></Icon>
